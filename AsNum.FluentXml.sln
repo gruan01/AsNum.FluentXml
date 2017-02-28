@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsNum.FluentXml", "AsNum.FluentXml\AsNum.FluentXml.csproj", "{367B846C-E03B-47CC-AA86-83190BE2FA75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsNum.FluentXml.Test", "AsNum.FluentXml.Test\AsNum.FluentXml.Test.csproj", "{DD940421-BDAA-44A5-B0BF-8A47C9835875}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{367B846C-E03B-47CC-AA86-83190BE2FA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{367B846C-E03B-47CC-AA86-83190BE2FA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{367B846C-E03B-47CC-AA86-83190BE2FA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{367B846C-E03B-47CC-AA86-83190BE2FA75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD940421-BDAA-44A5-B0BF-8A47C9835875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD940421-BDAA-44A5-B0BF-8A47C9835875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD940421-BDAA-44A5-B0BF-8A47C9835875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD940421-BDAA-44A5-B0BF-8A47C9835875}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
