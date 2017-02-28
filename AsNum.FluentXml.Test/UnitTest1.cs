@@ -21,6 +21,7 @@ namespace AsNum.FluentXml.Test {
 
 
             var data = new {
+                JustTest = FluentXmlEmptyElement.Create(),
                 RequestOn = DateTime.Now.AsIgnore(),
                 Request = new {
                     Source = new {
