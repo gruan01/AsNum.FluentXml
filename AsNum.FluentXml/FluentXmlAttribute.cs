@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace AsNum.FluentXml
 {
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class FluentXmlAttribute<T> : FluentXmlBase<T>
     {
 
-        protected override XObject BuildXml(string name)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        protected override XObject BuildXml(string name, XNamespace ns)
         {
-            return new XAttribute(name, this.GetFormattedValue());
+            var n = this.NS ?? ns;
+            return new XAttribute(n != null ? n + name : name, this.GetFormattedValue());
+            //return new XAttribute(name, this.GetFormattedValue());
         }
 
     }

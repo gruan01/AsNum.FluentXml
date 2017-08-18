@@ -1,33 +1,72 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
-namespace AsNum.FluentXml {
+namespace AsNum.FluentXml
+{
+    /// <summary>
+    /// 
+    /// </summary>
     public static class FluentXmlHelper
     {
-        public static FluentXmlAttribute<T> AsAttribute<T>(this T value, string format = null)
+
+        private static XmlWriterSettings Setting = new XmlWriterSettings()
+        {
+            //禁止生成 BOM 字节序
+            Encoding = new UTF8Encoding(false),
+            //NamespaceHandling = NamespaceHandling.OmitDuplicates
+        };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static FluentXmlAttribute<T> AsAttribute<T>(this T value, string format = null, string name = null, XNamespace ns = null)
         {
             return new FluentXmlAttribute<T>()
             {
                 Value = value,
-                Format = format
+                Format = format,
+                Name = name,
+                NS = ns
             };
         }
 
-
-        public static FluentXmlElement<T> AsElement<T>(this T value, string format = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static FluentXmlElement<T> AsElement<T>(this T value, string name = null, string format = null, XNamespace ns = null)
         {
             return new FluentXmlElement<T>()
             {
                 Value = value,
-                Format = format
+                Format = format,
+                Name = name,
+                NS = ns
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static FluentXmlElementValue<T> AsElementValue<T>(this T value, string format = null)
         {
             return new FluentXmlElementValue<T>()
@@ -37,19 +76,40 @@ namespace AsNum.FluentXml {
             };
         }
 
-        public static IEnumerable<FluentXmlElement<T>> AsElementArray<T>(this IEnumerable<T> values, string subElementName, string format = null)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="values"></param>
+        /// <param name="itemName"></param>
+        /// <param name="format"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static IEnumerable<FluentXmlElement<T>> AsElementArray<T>(this IEnumerable<T> values, string itemName, string format = null, XNamespace ns = null)
         {
-            foreach (var v in values)
+            if (values != null)
             {
-                yield return new FluentXmlElement<T>()
+                foreach (var v in values)
                 {
-                    Value = v,
-                    Format = format,
-                    Name = subElementName
-                };
+                    yield return new FluentXmlElement<T>()
+                    {
+                        Value = v,
+                        Format = format,
+                        Name = itemName,
+                        NS = ns
+                    };
+                }
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static FluentXmlIgnore<T> AsIgnore<T>(this T value)
         {
             return new FluentXmlIgnore<T>()
@@ -58,73 +118,145 @@ namespace AsNum.FluentXml {
             };
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fx"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static T SetFormat<T>(this T fx, string format) where T : FluentXmlBase
         {
             fx.Format = format;
             return fx;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fx"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public static T SetOrder<T>(this T fx, int? order) where T : FluentXmlBase
         {
             fx.Order = order;
             return fx;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fx"></param>
+        /// <param name="visible"></param>
+        /// <returns></returns>
         public static T SetNullVisible<T>(this T fx, bool visible) where T : FluentXmlBase
         {
             fx.NullVisible = visible;
             return fx;
         }
 
-
-
-        public static XObject Build(object obj, string name)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fx"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static T SetNameSpace<T>(this T fx, XNamespace ns) where T : FluentXmlBase
         {
-            if (obj == null)
-                return null;
+            fx.NS = ns;
+            return fx;
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fx"></param>
+        /// <param name="prefix"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static FluentXmlElement<T> AddNameSpace<T>(this FluentXmlElement<T> fx, string prefix, XNamespace ns)
+        {
+            fx.AdditionalNamespace.Add(prefix, ns);
+            return fx;
+        }
 
-            var type = obj.GetType();
-            if (type.Equals(typeof(string)) || type.IsPrimitive || type.IsValueType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="name"></param>
+        /// <param name="ns">命名空间</param>
+        /// <returns></returns>
+        public static IEnumerable<XObject> Build(object obj, string name, XNamespace ns)
+        {
+            if (obj != null)
             {
-                if (string.IsNullOrWhiteSpace(name))
-                    return null;
+                var xn = ns != null ? ns + name : name;
+
+                var type = obj.GetType();
+
+                if (obj is XElement)
+                    yield return (XElement)obj;
+
+                // String 也实现了 IEnumerable
+                else if (!string.IsNullOrWhiteSpace(name) && (type.Equals(typeof(string)) || type.IsPrimitive || type.IsValueType))
+                {
+                    yield return new XElement(xn, obj);
+                }
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                {
+                    foreach (var o in (IEnumerable)obj)
+                    {
+                        var n = o is FluentXmlBase ? ((FluentXmlBase)o).Name : "";
+                        var sub = Build(o, n, ns);
+                        if (sub != null)
+                            foreach (var s in sub)
+                                yield return s;
+                    }
+                }
+                else if (typeof(FluentXmlBase).IsAssignableFrom(type))
+                {
+                    var f = (FluentXmlBase)obj;
+                    yield return f.Build(name, ns);
+                }
                 else
                 {
-                    return new XElement(name, obj);
-                }
-            }
-            // String 也实现了 IEnumerable
-            else if (typeof(IEnumerable).IsAssignableFrom(type))
-            {
-                var ele = new XElement(name);
-                foreach (var o in (IEnumerable)obj)
-                {
-                    var sub = Build(o, "");
-                    if (sub != null)
+                    var ele = new XElement(xn);
+                    var ps = type.GetProperties();
+                    foreach (var p in ps)
+                    {
+                        var v = p.GetValue(obj, null);
+                        var sub = Build(v, p.Name, ns);
                         ele.Add(sub);
-                }
+                    }
 
-                return ele;
-            }
-            else if (typeof(FluentXmlBase).IsAssignableFrom(type))
-            {
-                var f = (FluentXmlBase)obj;
-                return f.Build(name);
-            }
-            else
-            {
-                var ele = new XElement(name);
-                var ps = type.GetProperties();
-                foreach (var p in ps)
-                {
-                    var v = p.GetValue(obj, null);
-                    ele.Add(Build(v, p.Name));
+                    yield return ele;
                 }
-
-                return ele;
             }
+        }
+
+        public static byte[] GetXmlData(object obj, string name, XNamespace ns)
+        {
+
+            var xos = Build(obj, name, ns);
+
+            var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), xos);
+            using (var stm = new MemoryStream())
+            using (var writter = XmlTextWriter.Create(stm, Setting))
+            {
+                doc.Save(writter);
+                writter.Flush();
+                return stm.ToArray();
+            }
+        }
+
+        public static string GetXml(object obj, string name, XNamespace ns)
+        {
+            return Encoding.UTF8.GetString(GetXmlData(obj, name, ns));
         }
     }
 }

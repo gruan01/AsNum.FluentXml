@@ -1,20 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-namespace AsNum.FluentXml {
+namespace AsNum.FluentXml
+{
 
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class FluentXmlBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Format
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int? Order
         {
             get;
@@ -30,34 +35,78 @@ namespace AsNum.FluentXml {
             set;
         }
 
-        public abstract XObject Build(string name);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public XNamespace NS { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public abstract XObject Build(string name, XNamespace ns);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class FluentXmlBase<T> : FluentXmlBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public T Value
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fluent"></param>
         public static implicit operator T(FluentXmlBase<T> fluent)
         {
             return fluent.Value;
         }
 
-        public override XObject Build(string name)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public override XObject Build(string name, XNamespace ns)
         {
             if (this.Value != null || (this.Value == null && this.NullVisible))
             {
-                return this.BuildXml(name);
+                return this.BuildXml(name, ns);
             }
             else
                 return null;
         }
 
-        protected abstract XObject BuildXml(string name);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        protected abstract XObject BuildXml(string name, XNamespace ns);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected object GetFormattedValue()
         {
             object value = this.Value;
