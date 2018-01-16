@@ -13,7 +13,7 @@ namespace AsNum.FluentXml
     public static class FluentXmlHelper
     {
 
-        private static XmlWriterSettings Setting = new XmlWriterSettings()
+        private static XmlWriterSettings DefaultSetting = new XmlWriterSettings()
         {
             //禁止生成 BOM 字节序
             Encoding = new UTF8Encoding(false),
@@ -239,14 +239,23 @@ namespace AsNum.FluentXml
             }
         }
 
-        public static byte[] GetXmlData(object obj, string name, XNamespace ns)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public static byte[] GetXmlData(object obj, string name, XNamespace ns, XmlWriterSettings setting = null)
         {
 
             var xos = Build(obj, name, ns);
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), xos);
             using (var stm = new MemoryStream())
-            using (var writter = XmlTextWriter.Create(stm, Setting))
+            using (var writter = XmlTextWriter.Create(stm, setting ?? DefaultSetting))
             {
                 doc.Save(writter);
                 writter.Flush();
@@ -254,9 +263,17 @@ namespace AsNum.FluentXml
             }
         }
 
-        public static string GetXml(object obj, string name, XNamespace ns)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="name"></param>
+        /// <param name="ns"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public static string GetXml(object obj, string name, XNamespace ns, XmlWriterSettings setting = null)
         {
-            return Encoding.UTF8.GetString(GetXmlData(obj, name, ns));
+            return Encoding.UTF8.GetString(GetXmlData(obj, name, ns, setting));
         }
     }
 }
