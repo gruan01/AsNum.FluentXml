@@ -120,5 +120,33 @@ namespace AsNum.FluentXml.Test
 
             var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
+        public void NamespaceTest()
+        {
+            var ns1 = XNamespace.Get("http://www.github.com");
+            var ns2 = XNamespace.Get("http://www.microsoft.com");
+            var ns3 = XNamespace.Get("http://www.nuget.com");
+            var data = new
+            {
+                ID = 1.AsAttribute(),
+                Name = "xling".AsAttribute(),
+                Title1 = "xxx".AsAttribute(name: "Title", ns: ns1),
+                Title2 = "abc".AsAttribute(name: "Title", ns: ns2),
+                Items = new
+                {
+                    Values = Enumerable.Range(1, 10).Select(i => i).AsElementArray("i", ns: ns3)
+                }.AsElement(ns: ns3)
+            }.AsElement()
+            .AddNameSpace("git", ns1)
+            .AddNameSpace("ms", ns2)
+            .AddNameSpace("nuget", ns3);
+
+            var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
+        }
     }
 }
