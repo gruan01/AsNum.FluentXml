@@ -150,6 +150,50 @@ var data = new
 var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
 ~~~
 
+With namespace and prefix:
+~~~
+var ns1 = XNamespace.Get("http://www.github.com");
+var ns2 = XNamespace.Get("http://www.microsoft.com");
+var ns3 = XNamespace.Get("http://www.nuget.com");
+var data = new
+{
+    ID = 1.AsAttribute(),
+    Name = "xling".AsAttribute(),
+    Title1 = "xxx".AsAttribute(name: "Title", ns: ns1),
+    Title2 = "abc".AsAttribute(name: "Title", ns: ns2),
+    Items = new
+    {
+        Values = Enumerable.Range(1, 10).Select(i => i).AsElementArray("i", ns: ns3)
+    }.AsElement(ns: ns3)
+}.AsElement()
+.AddNameSpace("git", ns1)
+.AddNameSpace("ms", ns2)
+.AddNameSpace("nuget", ns3);
+
+var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
+~~~
+XML:
+~~~
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<root ID="1" Name="xling" git:Title1="xxx" ms:Title2="abc" 
+    xmlns:git="http://www.github.com" 
+    xmlns:ms="http://www.microsoft.com" 
+    xmlns:nuget="http://www.nuget.com">
+    <nuget:Items>
+        <nuget:i>1</nuget:i>
+        <nuget:i>2</nuget:i>
+        <nuget:i>3</nuget:i>
+        <nuget:i>4</nuget:i>
+        <nuget:i>5</nuget:i>
+        <nuget:i>6</nuget:i>
+        <nuget:i>7</nuget:i>
+        <nuget:i>8</nuget:i>
+        <nuget:i>9</nuget:i>
+        <nuget:i>10</nuget:i>
+    </nuget:Items>
+</root>
+~~~
+
 FluentXml provide the following extension methods:
 * AsAttribute : Value will be show as a xml attribute.
 * AsElement : Value will be show as a element.
