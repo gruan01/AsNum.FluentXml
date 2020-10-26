@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/AsNum.FluentXml/AsNum.FluentXml.csproj_back

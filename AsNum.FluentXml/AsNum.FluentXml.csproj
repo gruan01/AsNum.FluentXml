@@ -1,62 +1,58 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{367B846C-E03B-47CC-AA86-83190BE2FA75}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AsNum.FluentXml</RootNamespace>
-    <AssemblyName>AsNum.FluentXml</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\AsNum.FluentXml.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="FluentXmlAttribute.cs" />
-    <Compile Include="FluentXmlBase.cs" />
-    <Compile Include="FluentXmlElement.cs" />
-    <Compile Include="FluentXmlElementValue.cs" />
-    <Compile Include="FluentXmlEmptyElement.cs" />
-    <Compile Include="FluentXmlHelper.cs" />
-    <Compile Include="FluentXmlIgnore.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Label="Globals">
+		<SccProjectName>SAK</SccProjectName>
+		<SccProvider>SAK</SccProvider>
+		<SccAuxPath>SAK</SccAuxPath>
+		<SccLocalPath>SAK</SccLocalPath>
+	</PropertyGroup>
+
+
+	<PropertyGroup>
+		<!--
+		生成多个目标版本, 可以是 netstandard2.0, net45, net451, net461 等.
+		提供 net452 的版本，是因为当前主项目是 net452 的，要兼容老的项目才提供这个版本的
+		-->
+		<TargetFrameworks>netstandard2.0;net452;</TargetFrameworks>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<!--为false 不会生成版本信息， 注意把 Properties/AssemblyInfo.cs 文件排除-->
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+		<!--CPS_SUP.Change, Version=0.0.0.11, Culture=neutral, PublicKeyToken=null 中的 Version-->
+		<AssemblyVersion>1.0.0.3</AssemblyVersion>
+
+		<!--无用-->
+		<!--<AssemblyFileVersion>5.0.0.3</AssemblyFileVersion>-->
+
+		<!--文件->属性->文件版本-->
+		<FileVersion>1.0.0.3</FileVersion>
+
+		<PackageTags>CNBooking</PackageTags>
+		<!--NUGET 包版本-->
+		<PackageVersion>1.0.0.3</PackageVersion>
+
+		<Authors>xling</Authors>
+
+		<LangVersion>8.0</LangVersion>
+		<!--文档路径-->
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	</PropertyGroup>
+
+
+
+	<!--因为上面设置了 GenerateAssemblyInfo = true, 会自动生成 AssemblyInfo ， 所以这里要把 Properties\AssemblyInfo.cs 排除 -->
+	<ItemGroup>
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="AsNum.FluentXml.csproj_back" />
+	</ItemGroup>
+
+	<!--<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>-->
+
 </Project>
