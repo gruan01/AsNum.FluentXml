@@ -95,6 +95,10 @@ namespace AsNum.FluentXml.Test
             var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         [TestMethod]
         public void ArrayWithoutParentTest()
         {
@@ -103,9 +107,13 @@ namespace AsNum.FluentXml.Test
                 Items = Enumerable.Range(0, 10).Select(i => i).AsElementArray("i"),
                 Count = 10.AsAttribute()
             };
-            var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
+            var xml = FluentXmlHelper.GetXml(data, "root");
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         [TestMethod]
         public void ArrayWithParentTest()
         {
@@ -118,7 +126,7 @@ namespace AsNum.FluentXml.Test
                 Count = 10
             };
 
-            var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
+            var xml = FluentXmlHelper.GetXml(data, "root");
         }
 
 
@@ -146,7 +154,32 @@ namespace AsNum.FluentXml.Test
             .AddNameSpace("ms", ns2)
             .AddNameSpace("nuget", ns3);
 
-            var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
+            var xml = FluentXmlHelper.GetXml(data, "root");
+        }
+
+
+        [TestMethod]
+        public void DefaultNamespaceTest()
+        {
+            var nsDefault = XNamespace.Get("http://www.cnbooking.net");
+            var ns1 = XNamespace.Get("http://www.github.com");
+
+            var data = new
+            {
+                ID = 1.AsAttribute(),
+                ID1 = 1.AsElement(name: "ID"),
+                GitID = 1.AsAttribute(name: "ID", ns: ns1),
+                GitID1 = 1.AsElement(name: "ID", ns: ns1),
+                GitInfo = new
+                {
+                    ID = 1.AsAttribute(ns: ns1),
+                    Name = "gruan@asnum.com".AsAttribute(),
+                    GitUrl = "http://www.github.com/gruan01".AsElement(ns: ns1)
+                }.AsElement().SetNameSpace(ns1)
+            }.AsElement()
+            .AddNameSpace("git", ns1);
+
+            var xml = FluentXmlHelper.GetXml(data, "root", nsDefault);
         }
     }
 }

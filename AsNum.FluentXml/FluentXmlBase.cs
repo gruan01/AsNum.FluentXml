@@ -11,7 +11,7 @@ namespace AsNum.FluentXml
         /// <summary>
         /// 
         /// </summary>
-        public string Format
+        internal string Format
         {
             get;
             set;
@@ -20,7 +20,7 @@ namespace AsNum.FluentXml
         /// <summary>
         /// 
         /// </summary>
-        public int? Order
+        internal int? Order
         {
             get;
             set;
@@ -29,7 +29,7 @@ namespace AsNum.FluentXml
         /// <summary>
         /// 当为 Null 或 空字符串的时候，是否显示，默认不显示
         /// </summary>
-        public bool NullVisible
+        internal bool NullVisible
         {
             get;
             set;
@@ -39,12 +39,12 @@ namespace AsNum.FluentXml
         /// <summary>
         /// 
         /// </summary>
-        public string Name { get; set; }
+        internal string Name { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public XNamespace NS { get; set; }
+        internal XNamespace NS { get; set; }
 
         /// <summary>
         /// 
@@ -52,7 +52,7 @@ namespace AsNum.FluentXml
         /// <param name="name"></param>
         /// <param name="ns"></param>
         /// <returns></returns>
-        public abstract XObject Build(string name, XNamespace ns);
+        internal abstract XObject Build(string name, XNamespace ns);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ namespace AsNum.FluentXml
         /// <summary>
         /// 
         /// </summary>
-        public T Value
+        internal T Value
         {
             get;
             set;
@@ -85,7 +85,7 @@ namespace AsNum.FluentXml
         /// <param name="name"></param>
         /// <param name="ns"></param>
         /// <returns></returns>
-        public override XObject Build(string name, XNamespace ns)
+        internal override XObject Build(string name, XNamespace ns)
         {
             if (this.Value != null || (this.Value == null && this.NullVisible))
             {

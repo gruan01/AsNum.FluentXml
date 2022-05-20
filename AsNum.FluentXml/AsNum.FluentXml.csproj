@@ -22,21 +22,21 @@
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
 		<!--CPS_SUP.Change, Version=0.0.0.11, Culture=neutral, PublicKeyToken=null 中的 Version-->
-		<AssemblyVersion>1.0.0.3</AssemblyVersion>
+		<AssemblyVersion>1.0.0.4</AssemblyVersion>
 
 		<!--无用-->
 		<!--<AssemblyFileVersion>5.0.0.3</AssemblyFileVersion>-->
 
 		<!--文件->属性->文件版本-->
-		<FileVersion>1.0.0.3</FileVersion>
+		<FileVersion>1.0.0.4</FileVersion>
 
 		<PackageTags>CNBooking</PackageTags>
 		<!--NUGET 包版本-->
-		<PackageVersion>1.0.0.3</PackageVersion>
+		<PackageVersion>1.0.0.4</PackageVersion>
 
 		<Authors>xling</Authors>
 
-		<LangVersion>8.0</LangVersion>
+		<LangVersion>9.0</LangVersion>
 		<!--文档路径-->
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 	</PropertyGroup>
@@ -49,6 +49,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="AsNum.FluentXml.csproj_back" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="IDisposableAnalyzers" Version="4.0.2">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	</ItemGroup>
 
 	<!--<ItemGroup>

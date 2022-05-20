@@ -13,11 +13,14 @@ namespace AsNum.FluentXml
     public static class FluentXmlHelper
     {
 
-        private static XmlWriterSettings DefaultSetting = new XmlWriterSettings()
+        /// <summary>
+        /// 
+        /// </summary>
+        private static readonly XmlWriterSettings DefaultSetting = new XmlWriterSettings()
         {
             //禁止生成 BOM 字节序
             Encoding = new UTF8Encoding(false),
-            //NamespaceHandling = NamespaceHandling.OmitDuplicates
+            NamespaceHandling = NamespaceHandling.OmitDuplicates,
         };
 
         /// <summary>
@@ -180,6 +183,11 @@ namespace AsNum.FluentXml
         /// <returns></returns>
         public static FluentXmlElement<T> AddNameSpace<T>(this FluentXmlElement<T> fx, string prefix, XNamespace ns)
         {
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                throw new System.ArgumentException($"“{nameof(prefix)}”不能为 null 或空白。", nameof(prefix));
+            }
+
             fx.AdditionalNamespace.Add(prefix, ns);
             return fx;
         }
@@ -199,29 +207,29 @@ namespace AsNum.FluentXml
 
                 var type = obj.GetType();
 
-                if (obj is XElement)
-                    yield return (XElement)obj;
-
+                if (obj is XElement element)
+                {
+                    yield return element;
+                }
                 // String 也实现了 IEnumerable
                 else if (!string.IsNullOrWhiteSpace(name) && (type.Equals(typeof(string)) || type.IsPrimitive || type.IsValueType))
                 {
                     yield return new XElement(xn, obj);
                 }
-                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                else if (obj is IEnumerable enumerable)
                 {
-                    foreach (var o in (IEnumerable)obj)
+                    foreach (var o in enumerable)
                     {
-                        var n = o is FluentXmlBase ? ((FluentXmlBase)o).Name : "";
+                        var n = o is FluentXmlBase @base ? @base.Name : "";
                         var sub = Build(o, n, ns);
                         if (sub != null)
                             foreach (var s in sub)
                                 yield return s;
                     }
                 }
-                else if (typeof(FluentXmlBase).IsAssignableFrom(type))
+                else if (obj is FluentXmlBase @base)
                 {
-                    var f = (FluentXmlBase)obj;
-                    yield return f.Build(name, ns);
+                    yield return @base.Build(name, ns);
                 }
                 else
                 {
@@ -248,19 +256,17 @@ namespace AsNum.FluentXml
         /// <param name="ns"></param>
         /// <param name="setting"></param>
         /// <returns></returns>
-        public static byte[] GetXmlData(object obj, string name, XNamespace ns, XmlWriterSettings setting = null)
+        public static byte[] GetXmlData(object obj, string name, XNamespace ns = null, XmlWriterSettings setting = null)
         {
 
             var xos = Build(obj, name, ns);
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), xos);
-            using (var stm = new MemoryStream())
-            using (var writter = XmlTextWriter.Create(stm, setting ?? DefaultSetting))
-            {
-                doc.Save(writter);
-                writter.Flush();
-                return stm.ToArray();
-            }
+            using var stm = new MemoryStream();
+            using var writter = XmlWriter.Create(stm, setting ?? DefaultSetting);
+            doc.Save(writter);
+            writter.Flush();
+            return stm.ToArray();
         }
 
         /// <summary>
@@ -271,7 +277,7 @@ namespace AsNum.FluentXml
         /// <param name="ns"></param>
         /// <param name="setting"></param>
         /// <returns></returns>
-        public static string GetXml(object obj, string name, XNamespace ns, XmlWriterSettings setting = null)
+        public static string GetXml(object obj, string name, XNamespace ns = null, XmlWriterSettings setting = null)
         {
             return Encoding.UTF8.GetString(GetXmlData(obj, name, ns, setting));
         }

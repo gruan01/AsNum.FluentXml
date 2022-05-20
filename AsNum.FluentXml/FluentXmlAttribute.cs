@@ -18,9 +18,9 @@ namespace AsNum.FluentXml
         /// <returns></returns>
         protected override XObject BuildXml(string name, XNamespace ns)
         {
-            var n = this.NS ?? ns;
-            return new XAttribute(n != null ? n + name : name, this.GetFormattedValue());
-            //return new XAttribute(name, this.GetFormattedValue());
+            var nn = string.IsNullOrWhiteSpace(this.Name) ? name : this.Name;
+            var n = this.NS; //?? ns;
+            return new XAttribute(n != null ? n + nn : nn, this.GetFormattedValue());
         }
 
     }
