@@ -3,7 +3,7 @@
 # Generate Xml without complex class structor!
 
 Think about the following xml ：
-~~~
+~~~xml
 <Root>
   <JustTest />
   <Request>
@@ -47,7 +47,7 @@ How many class need you define one by one  ?
 Joing string ?? Too lower!!
 
 Now, let me show you how to do this by programm:
-~~~
+~~~c#
 var names = new List<string>() {
     "Mr aa bb",
     "Mrs cc bb"
@@ -127,7 +127,7 @@ var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
 ~~~
 
 Array items without parent Element Example:
-~~~
+~~~c#
 var data = new
 {
     Items = Enumerable.Range(0, 10).Select(i => i).AsElementArray("i"),
@@ -137,7 +137,7 @@ var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
 ~~~
 
 Array items with parent element example:
-~~~
+~~~c#
 var data = new
 {
     Items = new
@@ -151,7 +151,7 @@ var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
 ~~~
 
 With namespace and prefix:
-~~~
+~~~c#
 var ns1 = XNamespace.Get("http://www.github.com");
 var ns2 = XNamespace.Get("http://www.microsoft.com");
 var ns3 = XNamespace.Get("http://www.nuget.com");
@@ -172,8 +172,9 @@ var data = new
 
 var xml = FluentXmlHelper.GetXml(data, "root", XNamespace.None);
 ~~~
+
 XML:
-~~~
+~~~xml
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <root ID="1" Name="xling" git:Title1="xxx" ms:Title2="abc" 
     xmlns:git="http://www.github.com" 
@@ -191,6 +192,40 @@ XML:
         <nuget:i>9</nuget:i>
         <nuget:i>10</nuget:i>
     </nuget:Items>
+</root>
+~~~
+
+Default Namespace:
+~~~c#
+            var nsDefault = XNamespace.Get("http://www.abc.net");
+            var ns1 = XNamespace.Get("http://www.github.com");
+
+            var data = new
+            {
+                ID = 1.AsAttribute(),
+                ID1 = 1.AsElement(name: "ID"),
+                GitID = 1.AsAttribute(name: "ID", ns: ns1),
+                GitID1 = 1.AsElement(name: "ID", ns: ns1),
+                GitInfo = new
+                {
+                    ID = 1.AsAttribute(ns: ns1),
+                    Name = "gruan@asnum.com".AsAttribute(),
+                    GitUrl = "http://www.github.com/gruan01".AsElement(ns: ns1)
+                }.AsElement().SetNameSpace(ns1)
+            }.AsElement()
+            .AddNameSpace("git", ns1);
+
+            var xml = FluentXmlHelper.GetXml(data, "root", nsDefault);
+~~~
+xml:
+~~~xml
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<root ID="1" git:ID="1" xmlns:git="http://www.github.com" xmlns="http://www.abc.net">
+    <ID>1</ID>
+    <git:ID>1</git:ID>
+    <git:GitInfo git:ID="1" Name="gruan@asnum.com">
+        <git:GitUrl>http://www.github.com/gruan01</git:GitUrl>
+    </git:GitInfo>
 </root>
 ~~~
 
