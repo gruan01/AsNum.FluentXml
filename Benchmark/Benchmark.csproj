@@ -1,19 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <RootNamespace>AsNum.FluentXml.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.8.3" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
     <ProjectReference Include="..\AsNum.FluentXml\AsNum.FluentXml.csproj" />
   </ItemGroup>
 

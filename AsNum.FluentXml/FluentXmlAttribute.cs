@@ -7,7 +7,7 @@ namespace AsNum.FluentXml
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FluentXmlAttribute<T> : FluentXmlBase<T>
+    public sealed class FluentXmlAttribute<T> : FluentXmlBase<T>
     {
 
         /// <summary>

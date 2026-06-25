@@ -7,7 +7,7 @@ namespace AsNum.FluentXml
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FluentXmlElementValue<T> : FluentXmlBase<T>
+    public sealed class FluentXmlElementValue<T> : FluentXmlBase<T>
     {
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace AsNum.FluentXml
         /// <returns></returns>
         protected override XObject BuildXml(string name, XNamespace ns)
         {
-            return new XCData(this.GetFormattedValue().ToString());
+            return new XCData(this.GetFormattedValue()?.ToString() ?? string.Empty);
         }
     }
 }

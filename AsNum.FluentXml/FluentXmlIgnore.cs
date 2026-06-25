@@ -6,7 +6,7 @@ namespace AsNum.FluentXml
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FluentXmlIgnore<T> : FluentXmlBase<T>
+    public sealed class FluentXmlIgnore<T> : FluentXmlBase<T>
     {
         /// <summary>
         /// 

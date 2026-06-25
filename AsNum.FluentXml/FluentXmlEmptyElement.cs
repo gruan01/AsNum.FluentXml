@@ -6,7 +6,7 @@ namespace AsNum.FluentXml
     /// <summary>
     /// 
     /// </summary>
-    public class FluentXmlEmptyElement : FluentXmlBase<object>
+    public sealed class FluentXmlEmptyElement : FluentXmlBase<object>
     {
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace AsNum.FluentXml
         /// <returns></returns>
         protected override XObject BuildXml(string name, XNamespace ns)
         {
-            return new XElement(ns + name);
+            return new XElement(ns != null ? ns + name : name);
         }
     }
 }

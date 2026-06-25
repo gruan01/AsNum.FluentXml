@@ -18,15 +18,6 @@ namespace AsNum.FluentXml
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        internal int? Order
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 当为 Null 或 空字符串的时候，是否显示，默认不显示
         /// </summary>
         internal bool NullVisible
@@ -53,6 +44,18 @@ namespace AsNum.FluentXml
         /// <param name="ns"></param>
         /// <returns></returns>
         internal abstract XObject Build(string name, XNamespace ns);
+    }
+
+    /// <summary>
+    /// 缓存格式化字符串 "{0:format}"，避免每次 GetFormattedValue 调用都构造中间字符串
+    /// </summary>
+    internal static class FormatCache
+    {
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _cache =
+            new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
+
+        internal static string GetOrAdd(string format) =>
+            _cache.GetOrAdd(format, f => string.Format("{{0:{0}}}", f));
     }
 
     /// <summary>
@@ -111,13 +114,12 @@ namespace AsNum.FluentXml
         {
             object value = this.Value;
 
-            if (value != null && !string.IsNullOrEmpty(this.Format))
+            if (value != null && this.Format != null && this.Format.Length > 0)
             {
-                var fmt = string.Format("{{0:{0}}}", this.Format);// $"{{0:{this.Format}}}";
-                value = string.Format(fmt, value);
+                value = string.Format(FormatCache.GetOrAdd(this.Format), value);
             }
 
-            return value ?? "";
+            return value ?? string.Empty;
         }
     }
 }

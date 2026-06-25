@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 
 namespace AsNum.FluentXml
@@ -10,7 +9,7 @@ namespace AsNum.FluentXml
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FluentXmlElement<T> : FluentXmlBase<T>
+    public sealed class FluentXmlElement<T> : FluentXmlBase<T>
     {
 
         /// <summary>
@@ -29,15 +28,24 @@ namespace AsNum.FluentXml
         /// <returns></returns>
         protected override XObject BuildXml(string name, XNamespace ns)
         {
-            var o = (XElement)FluentXmlHelper.Build(
+            XElement o = null!;
+            foreach (XObject xo in FluentXmlHelper.Build(
                 this.GetFormattedValue()
                 , this.Name ?? name
-                , this.NS ?? ns
-                ).FirstOrDefault();
+                , this.NS ?? ns))
+            {
+                o = (XElement)xo;
+                break;
+            }
 
-            var nss = this.AdditionalNamespace.Select(a => new XAttribute(XNamespace.Xmlns + a.Key, a.Value));
-            o.Add(nss);
-            var a = o.GetDefaultNamespace();
+            if (o == null)
+                return null!;
+
+            if (this.AdditionalNamespace.Count > 0)
+            {
+                foreach (var kv in this.AdditionalNamespace)
+                    o.Add(new XAttribute(XNamespace.Xmlns + kv.Key, kv.Value));
+            }
             return o;
         }
     }

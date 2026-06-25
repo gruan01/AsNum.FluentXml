@@ -10,10 +10,9 @@
 
 	<PropertyGroup>
 		<!--
-		生成多个目标版本, 可以是 netstandard2.0, net45, net451, net461 等.
-		提供 net452 的版本，是因为当前主项目是 net452 的，要兼容老的项目才提供这个版本的
+		生成多个目标版本: .NET Framework 4.8, .NET 8.0, .NET 10.0
 		-->
-		<TargetFrameworks>netstandard2.0;net452;</TargetFrameworks>
+		<TargetFrameworks>net48;net8.0;net10.0;</TargetFrameworks>
 
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -22,21 +21,21 @@
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
 		<!--CPS_SUP.Change, Version=0.0.0.11, Culture=neutral, PublicKeyToken=null 中的 Version-->
-		<AssemblyVersion>1.0.0.4</AssemblyVersion>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 
 		<!--无用-->
 		<!--<AssemblyFileVersion>5.0.0.3</AssemblyFileVersion>-->
 
 		<!--文件->属性->文件版本-->
-		<FileVersion>1.0.0.4</FileVersion>
+		<FileVersion>1.1.0.0</FileVersion>
 
 		<PackageTags>CNBooking</PackageTags>
 		<!--NUGET 包版本-->
-		<PackageVersion>1.0.0.4</PackageVersion>
+		<PackageVersion>1.1.0.0</PackageVersion>
 
 		<Authors>xling</Authors>
 
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>14</LangVersion>
 		<!--文档路径-->
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 	</PropertyGroup>

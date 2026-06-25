@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,6 +15,12 @@ namespace AsNum.FluentXml
     /// </summary>
     public static class FluentXmlHelper
     {
+
+        /// <summary>
+        /// 反射属性缓存，避免每次递归都调用 Type.GetProperties()
+        /// </summary>
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _propertyCache =
+            new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         /// <summary>
         /// 
@@ -139,19 +148,6 @@ namespace AsNum.FluentXml
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fx"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
-        public static T SetOrder<T>(this T fx, int? order) where T : FluentXmlBase
-        {
-            fx.Order = order;
-            return fx;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fx"></param>
         /// <param name="visible"></param>
         /// <returns></returns>
         public static T SetNullVisible<T>(this T fx, bool visible) where T : FluentXmlBase
@@ -211,8 +207,11 @@ namespace AsNum.FluentXml
                 {
                     yield return element;
                 }
-                // String 也实现了 IEnumerable
-                else if (!string.IsNullOrWhiteSpace(name) && (type.Equals(typeof(string)) || type.IsPrimitive || type.IsValueType))
+                else if (type == typeof(string))
+                {
+                    yield return new XElement(xn, obj);
+                }
+                else if (type.IsPrimitive || type.IsValueType)
                 {
                     yield return new XElement(xn, obj);
                 }
@@ -234,7 +233,7 @@ namespace AsNum.FluentXml
                 else
                 {
                     var ele = new XElement(xn);
-                    var ps = type.GetProperties();
+                    var ps = _propertyCache.GetOrAdd(type, t => t.GetProperties());
                     foreach (var p in ps)
                     {
                         var v = p.GetValue(obj, null);
