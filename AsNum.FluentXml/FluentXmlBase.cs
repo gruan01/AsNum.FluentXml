@@ -47,12 +47,11 @@ namespace AsNum.FluentXml
     }
 
     /// <summary>
-    /// 缓存格式化字符串 "{0:format}"，避免每次 GetFormattedValue 调用都构造中间字符串
+    /// 缓存格式化字符串 "{0:format}"，避免每次 GetFormattedValue 调用都构造中间字符串。
     /// </summary>
     internal static class FormatCache
     {
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _cache =
-            new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _cache = new();
 
         internal static string GetOrAdd(string format) =>
             _cache.GetOrAdd(format, f => string.Format("{{0:{0}}}", f));

@@ -21,17 +21,17 @@
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
 		<!--CPS_SUP.Change, Version=0.0.0.11, Culture=neutral, PublicKeyToken=null 中的 Version-->
-		<AssemblyVersion>1.1.0.0</AssemblyVersion>
+		<AssemblyVersion>1.1.0.1</AssemblyVersion>
 
 		<!--无用-->
 		<!--<AssemblyFileVersion>5.0.0.3</AssemblyFileVersion>-->
 
 		<!--文件->属性->文件版本-->
-		<FileVersion>1.1.0.0</FileVersion>
+		<FileVersion>1.1.0.1</FileVersion>
 
 		<PackageTags>CNBooking</PackageTags>
 		<!--NUGET 包版本-->
-		<PackageVersion>1.1.0.0</PackageVersion>
+		<PackageVersion>1.1.0.1</PackageVersion>
 
 		<Authors>xling</Authors>
 

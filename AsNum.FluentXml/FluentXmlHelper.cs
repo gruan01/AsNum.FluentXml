@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -17,10 +19,48 @@ namespace AsNum.FluentXml
     {
 
         /// <summary>
-        /// 反射属性缓存，避免每次递归都调用 Type.GetProperties()
+        /// 简单值类型集合：直接序列化为文本，不需要展开属性
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _propertyCache =
-            new ConcurrentDictionary<Type, PropertyInfo[]>();
+        private static readonly HashSet<Type> _simpleTypes = new()
+        {
+            typeof(bool), typeof(char),
+            typeof(sbyte), typeof(byte), typeof(short), typeof(ushort),
+            typeof(int), typeof(uint), typeof(long), typeof(ulong),
+            typeof(float), typeof(double), typeof(decimal),
+            typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
+            typeof(Guid), typeof(Uri), typeof(Version),
+        };
+
+        /// <summary>
+        /// 属性访问器：缓存 PropertyInfo 和编译后的 getter 委托，避免反射调用 GetValue
+        /// </summary>
+        private sealed class TypeAccessor
+        {
+            public PropertyInfo[] Properties { get; set; } = Array.Empty<PropertyInfo>();
+            public Func<object, object>[] Getters { get; set; } = Array.Empty<Func<object, object>>();
+        }
+
+        /// <summary>
+        /// 类型访问器缓存，一次查询获取 Properties + 编译后的 Getters
+        /// </summary>
+        private static readonly ConcurrentDictionary<Type, TypeAccessor> _accessorCache = new();
+
+        /// <summary>
+        /// 使用 Expression.Compile() 创建属性 getter 委托。
+        /// 首次构造 ~50μs，运行时调用 ~2ns。线程安全，兼容所有平台。
+        /// </summary>
+        private static Func<object, object> CompileGetter(PropertyInfo p)
+        {
+            // 跳过只写属性（无 getter）
+            if (p.GetGetMethod(nonPublic: true) == null)
+                return _ => null!;
+
+            var param = Expression.Parameter(typeof(object));
+            var cast = Expression.Convert(param, p.DeclaringType!);
+            var prop = Expression.Property(cast, p);
+            var box = Expression.Convert(prop, typeof(object));
+            return Expression.Lambda<Func<object, object>>(box, param).Compile();
+        }
 
         /// <summary>
         /// 
@@ -211,7 +251,7 @@ namespace AsNum.FluentXml
                 {
                     yield return new XElement(xn, obj);
                 }
-                else if (type.IsPrimitive || type.IsValueType)
+                else if (type.IsPrimitive || type.IsEnum || _simpleTypes.Contains(type))
                 {
                     yield return new XElement(xn, obj);
                 }
@@ -219,6 +259,8 @@ namespace AsNum.FluentXml
                 {
                     foreach (var o in enumerable)
                     {
+                        if (o == null)
+                            continue;
                         var n = o is FluentXmlBase @base ? @base.Name : "";
                         var sub = Build(o, n, ns);
                         if (sub != null)
@@ -233,12 +275,24 @@ namespace AsNum.FluentXml
                 else
                 {
                     var ele = new XElement(xn);
-                    var ps = _propertyCache.GetOrAdd(type, t => t.GetProperties());
-                    foreach (var p in ps)
+                    var accessor = _accessorCache.GetOrAdd(type, t =>
                     {
-                        var v = p.GetValue(obj, null);
-                        var sub = Build(v, p.Name, ns);
-                        ele.Add(sub);
+                        var ps = t.GetProperties();
+                        return new TypeAccessor
+                        {
+                            Properties = ps,
+                            Getters = ps.Select(CompileGetter).ToArray()
+                        };
+                    });
+
+                    var props = accessor.Properties;
+                    var getters = accessor.Getters;
+                    for (int i = 0; i < props.Length; i++)
+                    {
+                        var v = getters[i](obj);
+                        var subs = Build(v, props[i].Name, ns);
+                        if (subs != null)
+                            ele.Add(subs);
                     }
 
                     yield return ele;
